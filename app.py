@@ -1,0 +1,57 @@
+from flask import Flask, request, jsonify
+from flask_sqlalchemy import SQLAlchemy
+from flask_marshmallow import Marshmallow 
+import datetime
+
+# Init app
+app = Flask(__name__)
+
+# Database
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:catboys@172.17.0.2/postgres'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# Init database
+db = SQLAlchemy(app)
+
+# Init marshmallow
+ma = Marshmallow(app)
+
+# Create a Pain Object
+class PainEntry(db.Model):
+  id = db.Column(db.Integer, primary_key=True)
+  painLevel = db.Column(db.Integer)
+  date = db.Column(db.DateTime)
+
+  def __init__(self, painLevel, date):
+    self.painLevel = painLevel
+    self.date = date
+
+# Create a schema with marshmallow
+class PainEntrySchema(ma.Schema):
+  class Meta:
+    fields = ('painLevel', 'date')
+
+# Init schema
+pain_entry_schema = PainEntrySchema()
+pain_entries_schema = PainEntrySchema(many=True)
+
+# Route
+@app.route('/', methods=['GET'])
+def homepage():
+  return "Hello world"
+
+@app.route('/new-ouchie', methods=['PUT'])
+def add_pain_entry():
+  painLevel = request.json['painLevel']
+  date = datetime.datetime.now()
+
+  new_pain_entry = PainEntry(painLevel, date)
+
+  db.session.add(new_pain_entry)
+  db.session.commit()
+
+  return pain_entry_schema.jsonify(new_pain_entry)
+
+# Run server 
+if __name__ == '__main__':
+  app.run(debug=True)
