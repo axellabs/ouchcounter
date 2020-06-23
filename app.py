@@ -1,13 +1,22 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow 
+from dotenv import load_dotenv
 import datetime
+import os
+
+# Load secrets and env variables
+load_dotenv()
+USERNAME =  os.getenv("DATABASE_USERNAME")
+PASSWORD =  os.getenv("DATABASE_PASSWORD")
+URI =  os.getenv("DATABASE_URI")
+NAME =  os.getenv("DATABASE_NAME")
 
 # Init app
 app = Flask(__name__)
 
 # Database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:catboys@172.17.0.2/postgres'
+app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{USERNAME}:{PASSWORD}@{URI}/{NAME}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Init database
