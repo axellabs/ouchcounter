@@ -1,4 +1,3 @@
-dotenv
 flask
 flask_marshmallow
 flask_sqlalchemy
