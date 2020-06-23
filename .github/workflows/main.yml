@@ -1,2 +1,10 @@
-- name: GitHub Action for pylint
-  uses: cclauss/GitHub-Action-for-pylint@0.7.0
+name: Pylint
+on: [push]
+jobs:
+  Pylint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-python@v1
+      - run: pip install -r requirements.txt
+      - run: pylint **/*.py
