@@ -44,14 +44,32 @@ class PainEntrySchema(ma.Schema):
 pain_entry_schema = PainEntrySchema()
 pain_entries_schema = PainEntrySchema(many=True)
 
-# Route
+##--------
+## Routes
+##---------
+
+# Home route
 @app.route('/', methods=['GET'])
 def homepage():
   return "Hello world"
 
+# Add a pain entry
 @app.route('/new-ouchie', methods=['PUT'])
 def add_pain_entry():
   painLevel = request.json['painLevel']
+  date = datetime.datetime.now()
+
+  new_pain_entry = PainEntry(painLevel, date)
+
+  db.session.add(new_pain_entry)
+  db.session.commit()
+
+  return pain_entry_schema.jsonify(new_pain_entry)
+
+# Add a pain entry: but more automated
+@app.route('/new-ouchie/<painLevel>', methods=['PUT'])
+def add_pain_entry_url(painLevel):
+  painLevel = painLevel
   date = datetime.datetime.now()
 
   new_pain_entry = PainEntry(painLevel, date)
