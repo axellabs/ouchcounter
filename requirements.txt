@@ -6,4 +6,3 @@ psycopg2
 pylint
 pylint_flask
 pylint_flask_sqlalchemy
-flask_sqlalchem
