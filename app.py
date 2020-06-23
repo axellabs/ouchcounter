@@ -1,16 +1,16 @@
+import os
+import datetime
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from flask_marshmallow import Marshmallow 
+from flask_marshmallow import Marshmallow
 from dotenv import load_dotenv
-import datetime
-import os
 
 # Load secrets and env variables
 load_dotenv()
-USERNAME =  os.getenv("DATABASE_USERNAME")
-PASSWORD =  os.getenv("DATABASE_PASSWORD")
-URI =  os.getenv("DATABASE_URI")
-NAME =  os.getenv("DATABASE_NAME")
+USERNAME = os.getenv("DATABASE_USERNAME")
+PASSWORD = os.getenv("DATABASE_PASSWORD")
+URI = os.getenv("DATABASE_URI")
+NAME = os.getenv("DATABASE_NAME")
 
 # Init app
 app = Flask(__name__)
@@ -27,65 +27,66 @@ ma = Marshmallow(app)
 
 # Create a Pain Object
 class PainEntry(db.Model):
-  id = db.Column(db.Integer, primary_key=True)
-  painLevel = db.Column(db.Integer)
-  date = db.Column(db.DateTime)
 
-  def __init__(self, painLevel, date):
-    self.painLevel = painLevel
-    self.date = date
+    id = db.Column(db.Integer, primary_key=True)
+    pain_level = db.Column(db.Integer)
+    date = db.Column(db.DateTime)
+
+    def __init__(self, pain_level, date):
+        self.pain_level = pain_level
+        self.date = date
 
 # Create a schema with marshmallow
 class PainEntrySchema(ma.Schema):
-  class Meta:
-    fields = ('painLevel', 'date')
+    class Meta:
+        fields = ('pain_level', 'date')
 
 # Init schema
 pain_entry_schema = PainEntrySchema()
 pain_entries_schema = PainEntrySchema(many=True)
 
-##--------
+#--------
 ## Routes
-##---------
+#---------
 
 # Home route
 @app.route('/', methods=['GET'])
 def homepage():
-  return "Hello world"
+    return "Hello world"
 
 # Add a pain entry
 @app.route('/new-ouchie', methods=['PUT'])
 def add_pain_entry():
-  painLevel = request.json['painLevel']
-  date = datetime.datetime.now()
+    pain_level = request.json['pain_level']
+    date = datetime.datetime.now()
 
-  new_pain_entry = PainEntry(painLevel, date)
+    new_pain_entry = PainEntry(pain_level, date)
 
-  db.session.add(new_pain_entry)
-  db.session.commit()
+    db.session.add(new_pain_entry)
+    db.session.commit()
 
-  return pain_entry_schema.jsonify(new_pain_entry)
+    return pain_entry_schema.jsonify(new_pain_entry)
 
 # Add a pain entry: but more automated
 @app.route('/new-ouchie/<painLevel>', methods=['PUT'])
-def add_pain_entry_url(painLevel):
-  painLevel = painLevel
-  date = datetime.datetime.now()
+def add_pain_entry_url(pain_level):
+    date = datetime.datetime.now()
 
-  new_pain_entry = PainEntry(painLevel, date)
+    new_pain_entry = PainEntry(pain_level, date)
 
-  db.session.add(new_pain_entry)
-  db.session.commit()
+    db.session.add(new_pain_entry)
+    db.session.commit()
 
-  return pain_entry_schema.jsonify(new_pain_entry)
+    return pain_entry_schema.jsonify(new_pain_entry)
 
 # Return all pain logs
 @app.route('/all-ouchies', methods=['GET'])
 def show_pain_entries():
-  all_pain_entries = PainEntry.query.all()
-  result = pain_entries_schema.dump(all_pain_entries)
-  return jsonify(result)
+    all_pain_entries = PainEntry.query.all()
+    result = pain_entries_schema.dump(all_pain_entries)
+    return jsonify(result)
 
-# Run server 
+# Run server
 if __name__ == '__main__':
-  app.run(debug=True)
+    app.run(debug=True)
+    
