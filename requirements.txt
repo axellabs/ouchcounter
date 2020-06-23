@@ -3,6 +3,7 @@ flask_marshmallow
 flask_sqlalchemy
 marshmallow
 psycopg2
+dotenv
 pylint
 pylint_flask
 pylint_flask_sqlalchemy
