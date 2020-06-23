@@ -79,6 +79,13 @@ def add_pain_entry_url(painLevel):
 
   return pain_entry_schema.jsonify(new_pain_entry)
 
+# Return all pain logs
+@app.route('/all-ouchies', methods=['GET'])
+def show_pain_entries():
+  all_pain_entries = PainEntry.query.all()
+  result = pain_entries_schema.dump(all_pain_entries)
+  return jsonify(result)
+
 # Run server 
 if __name__ == '__main__':
   app.run(debug=True)
