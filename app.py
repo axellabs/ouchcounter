@@ -28,7 +28,7 @@ db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
 # Create a Pain Object
-class PainEntry(db.Model):
+class PainEntry(db.Model):      # pylint: disable=too-few-public-methods 
     """The database model for a single pain entry
 
     Args:
@@ -50,7 +50,7 @@ class PainEntrySchema(ma.Schema):
         ma (Marshmellow): a schema wrapper (???)
         learn more about marshmellow and how that works
     """
-    class Meta:
+    class Meta:     # pylint: disable=too-few-public-methods 
         """holds the fields for the schema
         """
         fields = ('pain_level', 'date')
